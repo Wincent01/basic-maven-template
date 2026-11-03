@@ -1,19 +1,36 @@
 package {{group_id}}.{{artifact_id|replace('-','_')}}.controller;
 
+import static com.raylib.Raylib.*;
+
 {# The import order depends on the package name, so sort like google-java-format does. -#}
 {% set pkg = group_id ~ '.' ~ artifact_id|replace('-', '_') -%}
-{% for name in [pkg ~ '.model.Model', pkg ~ '.model.Model.Velocity', pkg ~ '.view.View', pkg ~ '.view.View.Key', 'java.util.Set'] | sort(case_sensitive=true) -%}
+{% for name in [pkg ~ '.model.Model', pkg ~ '.model.Model.Velocity', 'java.util.EnumSet', 'java.util.Set', 'java.util.function.Consumer'] | sort(case_sensitive=true) -%}
 import {{ name }};
 {% endfor %}
 public class Controller {
+  enum Key {
+    LEFT(KEY_LEFT),
+    RIGHT(KEY_RIGHT),
+    UP(KEY_UP),
+    DOWN(KEY_DOWN);
+
+    private final int raylibCode;
+
+    Key(int raylibCode) {
+      this.raylibCode = raylibCode;
+    }
+  }
+
   /** Speed while an arrow key is held, in pixels per second. */
   private static final float SPEED = 200f;
 
   private final Model model;
 
-  public Controller(Model model, View view) {
+  private Consumer<Set<Key>> heldKeysListener = heldKeys -> {};
+
+  public Controller(Model model) {
     this.model = model;
-    view.setOnHeldKeysListener(this::move);
+    this.heldKeysListener = this::move;
   }
 
   private void move(Set<Key> heldKeys) {
@@ -32,5 +49,19 @@ public class Controller {
       direction += 1;
     }
     return direction;
+  }
+
+  public void update() {
+    processInput();
+  }
+
+  private void processInput() {
+    Set<Key> heldKeys = EnumSet.noneOf(Key.class);
+    for (Key key : Key.values()) {
+      if (IsKeyDown(key.raylibCode)) {
+        heldKeys.add(key);
+      }
+    }
+    heldKeysListener.accept(heldKeys);
   }
 }

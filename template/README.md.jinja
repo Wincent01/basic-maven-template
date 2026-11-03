@@ -46,16 +46,16 @@ src/test/java/{{package_dir}}/
 
 ## MVC rules
 
-Each frame, `{{main_class}}` calls `model.update(dt)` to advance the game, then `view.update()`, which reads input and draws the model.
+Each frame, `{{main_class}}` calls `model.update(dt)` to advance the game, `view.update()` to draw the model, and `controller.update()` to read input and set the velocity for the next frame.
 
 - **Model** holds the game state and the rules for how it changes. It must not use raylib, so it can be tested without opening a window.
-- **View** draws the model and turns raw keyboard input into events, e.g. "these arrow keys are held this frame". It reads from the model but never changes it.
-- **Controller** registers listeners with the view and decides how to change the model when an event happens. It never draws and never reads raw input.
+- **View** draws the model. It reads from the model but never changes it, and never reads input.
+- **Controller** reads raw keyboard input and decides how to change the model. It never draws and does not depend on the view.
 
 ```
- keyboard ──► View ──event──► Controller ──changes──► Model
-               ▲                                        │
-               └──────────────── reads ─────────────────┘
+ keyboard ──► Controller ──changes──► Model
+                                      │
+               View ◄───── reads ─────┘
 ```
 
 ## NixOS

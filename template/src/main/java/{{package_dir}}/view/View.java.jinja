@@ -5,48 +5,17 @@ import static com.raylib.Raylib.*;
 
 {# The import order depends on the package name, so sort like google-java-format does. -#}
 {% set pkg = group_id ~ '.' ~ artifact_id|replace('-', '_') -%}
-{% for name in [pkg ~ '.model.Model', pkg ~ '.model.Model.Position', pkg ~ '.model.Model.Size', 'java.util.EnumSet', 'java.util.Set', 'java.util.function.Consumer'] | sort(case_sensitive=true) -%}
+{% for name in [pkg ~ '.model.Model', pkg ~ '.model.Model.Position', pkg ~ '.model.Model.Size'] | sort(case_sensitive=true) -%}
 import {{ name }};
 {% endfor %}
 public class View {
   private final Model model;
-  private Consumer<Set<Key>> heldKeysListener = heldKeys -> {};
-
-  public enum Key {
-    LEFT(KEY_LEFT),
-    RIGHT(KEY_RIGHT),
-    UP(KEY_UP),
-    DOWN(KEY_DOWN);
-
-    private final int raylibCode;
-
-    Key(int raylibCode) {
-      this.raylibCode = raylibCode;
-    }
-  }
-
   public View(Model model) {
     this.model = model;
   }
 
-  /** The listener is called every frame with the keys held down, which may be none. */
-  public void setOnHeldKeysListener(Consumer<Set<Key>> listener) {
-    heldKeysListener = listener;
-  }
-
   public void update() {
-    processInput();
     draw();
-  }
-
-  private void processInput() {
-    Set<Key> heldKeys = EnumSet.noneOf(Key.class);
-    for (Key key : Key.values()) {
-      if (IsKeyDown(key.raylibCode)) {
-        heldKeys.add(key);
-      }
-    }
-    heldKeysListener.accept(heldKeys);
   }
 
   private void draw() {

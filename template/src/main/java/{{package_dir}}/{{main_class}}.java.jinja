@@ -9,19 +9,21 @@ import {{group_id}}.{{artifact_id|replace('-','_')}}.view.View;
 public class {{main_class}} {
   private static final int SCREEN_WIDTH = 800;
   private static final int SCREEN_HEIGHT = 450;
+  private static final int FRAMES_PER_SECOND = 60;
+  private static final String TITLE = "{{project_name}}";
 
   public static void main(String[] args) {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "{{project_name}}");
-    SetTargetFPS(60);
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE);
+    SetTargetFPS(FRAMES_PER_SECOND);
 
     Model model = new Model();
     View view = new View(model);
-    // The controller registers its listeners with the view, so we don't need to keep a reference.
-    new Controller(model, view);
+    Controller controller = new Controller(model);
 
     while (!WindowShouldClose()) {
       model.update(GetFrameTime());
       view.update();
+      controller.update();
     }
 
     CloseWindow();
