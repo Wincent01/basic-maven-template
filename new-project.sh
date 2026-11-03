@@ -74,8 +74,8 @@ validate_java_version() {
   local number='^[0-9]+$'
   if ! [[ "$1" =~ $number ]]; then
     echo "The Java version must be a whole number, e.g. 21."
-  elif ((10#$1 < 21)); then
-    echo "The Java version must be 21 or later."
+  elif ((10#$1 < 17)); then
+    echo "The Java version must be 17 or later."
   fi
 }
 

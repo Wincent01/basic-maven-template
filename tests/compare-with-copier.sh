@@ -41,11 +41,29 @@ compare() {
 }
 
 compare defaults "My Project" com.example my-project Main 21
+compare java-17 "My Project" com.example my-project Main 17
 # A group ID after "java" in sort order puts the java.util imports first.
 compare imports-sorted-after-java "Space Invaders" se.kth space-invaders-2 Game 25
 # Project names YAML must quote, and non-ASCII characters.
 compare quoted-name "It's: #1 é" org.zz on App 21
 compare numeric-name "2048" a.b yes Main 21
+
+# Both paths must reject the version immediately below the minimum.
+if copier copy --quiet --defaults --vcs-ref HEAD -d java_version=16 \
+  "$repo" "$work/rejected" >"$work/copier-rejected.log" 2>&1; then
+  echo "FAIL Copier accepted Java 16"
+  failures=$((failures + 1))
+else
+  grep -q 'The Java version must be 17 or later.' "$work/copier-rejected.log"
+  echo "ok   Copier rejects Java 16"
+fi
+
+# The interactive script should explain the error and accept a corrected answer.
+printf '\n\n\n\n16\n17\n' |
+  bash "$repo/new-project.sh" "$work/retry" >"$work/script-retry.log" 2>&1
+grep -q 'The Java version must be 17 or later.' "$work/script-retry.log"
+grep -q '^java_version: 17$' "$work/retry/.copier/maven-template-answers.yml"
+echo "ok   script rejects Java 16 and accepts Java 17"
 
 if ((failures > 0)); then
   echo "$failures case(s) failed."

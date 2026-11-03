@@ -38,7 +38,7 @@ java_version:
   help: Which java version do you want to use?
   default: 21
   validator: >-
-    {% if java_version < 21 %}The Java version must be 21 or later.{% endif %}
+    {% if java_version < 17 %}The Java version must be 17 or later.{% endif %}
 
 # Computed, not asked. Keeps `|` out of template file names, which Windows forbids.
 package_dir:

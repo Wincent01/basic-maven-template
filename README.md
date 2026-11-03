@@ -9,9 +9,21 @@ Configures a Maven project with
 
 The generated project has its own README explaining how to run it and the MVC rules.
 
+## Prerequisites
+
+To **build and run the generated project**, install a **Java Development Kit (JDK) 17 or later**, not just a Java Runtime Environment (JRE). Check your installation with `java -version` and `javac -version`. When creating the project, choose a `java_version` no higher than your installed JDK: the default is `21`, so choose `17` if you have JDK 17.
+
+You do **not** need to install Maven. The generated project's Maven wrapper downloads it on first use. That first build needs internet access to download Maven and dependencies.
+
+To **create a project**, use either:
+- **Copier 9.10.3 or later**, e.g. installed with `pipx install copier` or `uv tool install copier`.
+- **Bash**, using the script described under [Without Copier](#without-copier). On Windows, use Git Bash, included with [Git for Windows](https://git-scm.com/downloads/win).
+
+Java is not needed just to generate the project files. Git is optional if you download the repository as a ZIP and use the Bash script.
+
 ## Creating a new project
 
-This repo is a [Copier](https://copier.readthedocs.io/) template. You need Copier 9.10.3 or later, e.g. installed with `pipx install copier` or `uv tool install copier`.
+This repo is a [Copier](https://copier.readthedocs.io/) template.
 
 1. Generate the project into a new directory:
    ```
@@ -23,7 +35,7 @@ This repo is a [Copier](https://copier.readthedocs.io/) template. You need Copie
    - `group_id`: reverse domain notation, e.g. `org.codehaus.mojo` (default `com.example`).
    - `artifact_id`: dash-separated, e.g. `exec-maven-plugin`. The base package is `<group_id>.<artifact_id>` with dashes replaced by underscores (default `my-project`).
    - `main_class`: name of the main class (default `Main`).
-   - `java_version`: Java version to compile for (default `21`).
+   - `java_version`: Java version to compile for (`17` or later, default `21`). Choose `17` if you have JDK 17 installed.
 
 ### Without Copier
 
@@ -76,4 +88,10 @@ Every build first formats all Java files with google-java-format.
 ```
 tests/compare-with-copier.sh
 ```
-It needs Copier, and checks that the script and Copier create the same files for several sets of answers.
+It needs Copier, and checks that the script and Copier create the same files for several sets of answers, including Java 17, and reject versions below 17.
+
+To verify that both generated projects format, compile, pass their tests, and package on the minimum supported JDK:
+```
+JAVA_HOME=/path/to/jdk-17 bash tests/build-java-17.sh
+```
+This also needs Copier and network access to download Maven and dependencies.
