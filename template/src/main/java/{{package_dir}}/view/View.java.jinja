@@ -1,8 +1,5 @@
 package {{group_id}}.{{artifact_id|replace('-','_')}}.view;
 
-import static com.raylib.Colors.*;
-import static com.raylib.Raylib.*;
-
 {# The import order depends on the package name, so sort like google-java-format does. -#}
 {% set pkg = group_id ~ '.' ~ artifact_id|replace('-', '_') -%}
 {% for name in [pkg ~ '.model.Model', pkg ~ '.model.Model.Position', pkg ~ '.model.Model.Size'] | sort(case_sensitive=true) -%}
@@ -12,18 +9,5 @@ public class View {
   private final Model model;
   public View(Model model) {
     this.model = model;
-  }
-
-  public void update() {
-    draw();
-  }
-
-  private void draw() {
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-    Position position = model.getPosition();
-    Size size = model.getSize();
-    DrawRectangle((int) position.x(), (int) position.y(), size.width(), size.height(), MAROON);
-    EndDrawing();
   }
 }
